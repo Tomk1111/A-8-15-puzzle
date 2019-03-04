@@ -20,19 +20,20 @@ public class validation
 		{
 		    for (int j = 0; j < values[0].length; j++)
 			{
-                 if (values[i][j] > 8 || values[i][j] < 0) return false;
+			         // check to see if values are in range.
+                                 if (values[i][j] > 8 || values[i][j] < 0) return false;
 				 
 				 // we are accessing each value once here. Have to check to make sure that that is the only time that number appeared.
 				 else if (check[values[i][j]] == false)
 				 {
 					 check[values[i][j]] = true;
 				 }
-                 else if(check[values[i][j]] == true)
+                                 else if(check[values[i][j]] == true)
 				 {
 					 return false; // this means that the value has occurred more than once
 				 }					 
 			}
 		}
-        return true;
+        return true; // the values have passed the range check and the duplication check so set must be valid.
 	}
 }
