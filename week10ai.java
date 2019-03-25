@@ -117,4 +117,30 @@ public static void solveit(int[][]source,int x,int y)
         return true; // the values have passed the range check and the duplication check so set must be valid.
 	}
 	
+public int [][] fill(String text)
+    {
+	int [][] answer=new int[3][3];
+	String [] sArr=new String[9];
+	String input="";
+	int counter=0;
+	input=JOptionPane.showInputDialog(null,text);
+	sArr=input.split(" ");
+	if(sArr.length==9)
+	    {
+		for(int i=0;i<3;i++)
+		    {
+			for(int j=0;j<3;j++)
+			    {
+				answer[i][j]=Integer.parseInt(sArr[counter]);
+				counter++;
+			    }
+		    }
+	    }
+	else
+	    {
+		JOptionPane.showMessageDialog(null,"State entered did not contain 9 numbers");
+		full=false;
+	    }
+	return answer;
+    }
 }
