@@ -6,36 +6,70 @@ public class  eightPuzzle
 	public static boolean full=false;
 public static void main(String[] args)
 {
-
+	
 	int finall[][];
+	int goal[][];
 	boolean valid=false;
 	finall=new int[3][3];
-	finall=fill("ass");
-	valid=inputCheck(finall);
+	finall=fill("User Puzzle");
+	goal=new int[3][3];
+	goal=fill("END Puzzle");
 	int posx=getx(finall);
 	int posy=gety(finall);
-	solveit(finall,posx,posy);
+	solveit(finall,posx,posy,goal);
 }
 
 
-public static void solveit(int[][]source,int x,int y)
+public static void solveit(int[][]source,int x,int y,int [][]goal)
 	{
+	int[][]temp=new int[source.length][source.length];
+	temp=copy(source);
+	
+	int tempx=0;
+	
+	if(y+1<source.length)
+		{
+			System.out.println("(B): "+source[x][y+1] + " to the west");
+			temp=copy(source);
+			tempx =temp[x][y+1];
+			temp[x][y+1]=0;
+			temp[x][y]=tempx;
+			System.out.println("H Value="+getCost(temp,goal));
+		}
+		
 		if(y-1>=0)
 		{
-			System.out.println(source[x][y-1] +" to the west");
+			System.out.println("(A): "+source[x][y-1] +" to the east");
+			temp=copy(source);
+			tempx =temp[x][y-1];
+			temp[x][y-1]=0;
+			temp[x][y]=tempx;
+			System.out.println("H Value="+getCost(temp,goal));
+			
+			
 		}
-		if(y+1<source.length)
-		{
-			System.out.println(source[x][y+1] + " to the east");
-		}
-		if(x+1<source.length)
-		{
-			System.out.println(source[x+1][y] + " to the south");
-		}
+		
 		if(x-1>=0)
 		{
-			System.out.println(source[x-1][y] + " to the north");
+			System.out.println("(C): "+source[x-1][y] + " to the south");
+			temp=copy(source);
+			tempx =temp[x-1][y];
+			temp[x-1][y]=0;
+			temp[x][y]=tempx;
+			System.out.println("H Value="+getCost(temp,goal));
 		}
+		
+		if(x+1<source.length)
+		{
+			System.out.println("(D): "+source[x+1][y] + " to the north");
+			temp=copy(source);
+			tempx =temp[x+1][y];
+			temp[x+1][y]=0;
+			temp[x][y]=tempx;
+			System.out.println("H Value="+getCost(temp,goal));
+		}
+		
+		
 	}
 	
 	public static int[][] getinput()
@@ -147,21 +181,60 @@ public static int [][] fill(String text)
 					}
 					else
 					{
-						JOptionPane.showMessageDialog(null,"State entered did not contain 9 numberssssssss");
+						JOptionPane.showMessageDialog(null,"State entered did not contain numbers 0-8");
 					}
 			}
 			else
 			{
-				JOptionPane.showMessageDialog(null,"State entered did not contain 9 numbersdigit");
+				JOptionPane.showMessageDialog(null,"State entered did not contain all numbers");
 			}
 			}
 		else
 			{
-			JOptionPane.showMessageDialog(null,"State entered did not contain 9 numberslength");
+			JOptionPane.showMessageDialog(null,"State entered did not contain exactly 9 states");
 			}
 			alldigit=true;
 			counter=0;
 		}
+		full=false;
 		return answer;
+		
+	
     }
+	
+	
+	public static int getCost(int[][] values,int[][] goal)
+	{
+		int val=0;
+		for(int i=0;i<values.length;i++)
+		{
+			for(int j=0;j<values.length;j++)
+			{
+				if(values[i][j]!=0)
+				{
+					if(values[i][j]!=goal[i][j])
+						val++;
+					
+				}
+			}
+		}
+		
+		return val;
+	}
+	
+	public static int [][] copy(int [][] source)
+	{
+		int [][]temp=new int[source.length][source.length];
+		
+		for (int i=0;i<source.length;i++)
+		{
+			for(int j=0;j<source.length;j++)
+			{
+			temp[i][j]=source[i][j];
+			}
+		
+		}
+		return temp;
+	}
+	
 }
