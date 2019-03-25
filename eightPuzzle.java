@@ -11,9 +11,9 @@ public static void main(String[] args)
 	int goal[][];
 	boolean valid=false;
 	finall=new int[3][3];
-	finall=fill("User Puzzle");
+	finall=fill("Please enter the Start state as a sequence of numbers between [0, 8] e.g 5 2 0 6 1 3 4 8 7"");
 	goal=new int[3][3];
-	goal=fill("END Puzzle");
+	goal=fill("Please enter the End state as a sequence of numbers between [0, 8] e.g 5 2 0 6 1 3 4 8 7"");
 	int posx=getx(finall);
 	int posy=gety(finall);
 	solveit(finall,posx,posy,goal);
