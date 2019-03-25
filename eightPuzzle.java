@@ -3,7 +3,7 @@ import javax.swing.*;
 import java.util.*;
 public class  eightPuzzle
 {
-	
+	public static boolean full=false;
 public static void main(String[] args)
 {
 
@@ -12,16 +12,9 @@ public static void main(String[] args)
 	finall=new int[3][3];
 	finall=fill("ass");
 	valid=inputCheck(finall);
-	if(valid)
-	{
 	int posx=getx(finall);
 	int posy=gety(finall);
 	solveit(finall,posx,posy);
-	}
-	else
-	{
-		JOptionPane.showMessageDialog(null,"Invalid characters entered.");
-	}
 }
 
 
@@ -126,24 +119,49 @@ public static int [][] fill(String text)
 	String [] sArr=new String[9];
 	String input="";
 	int counter=0;
-	input=JOptionPane.showInputDialog(null,text);
-	sArr=input.split(" ");
-	if(sArr.length==9)
-	    {
-		for(int i=0;i<3;i++)
-		    {
-			for(int j=0;j<3;j++)
-			    {
-				answer[i][j]=Integer.parseInt(sArr[counter]);
-				counter++;
-			    }
-		    }
-	    }
-	else
-	    {
-		JOptionPane.showMessageDialog(null,"State entered did not contain 9 numbers");
-		//full=false;
-	    }
-	return answer;
+	boolean alldigit=true;
+	while(!full)
+		{
+		input=JOptionPane.showInputDialog(null,text);
+		sArr=input.split(" ");
+		if(sArr.length==9)
+			{
+			for(int h=0;h<sArr.length;h++)
+			{
+				if(!sArr[h].matches("\\d+"))
+					alldigit=false;
+			}
+			if(alldigit)
+			{
+			for(int i=0;i<3;i++)
+				{
+				for(int j=0;j<3;j++)
+					{
+					answer[i][j]=Integer.parseInt(sArr[counter]);
+					counter++;
+					}
+				}
+					if(inputCheck(answer))
+					{
+						full=true;
+					}
+					else
+					{
+						JOptionPane.showMessageDialog(null,"State entered did not contain 9 numberssssssss");
+					}
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(null,"State entered did not contain 9 numbersdigit");
+			}
+			}
+		else
+			{
+			JOptionPane.showMessageDialog(null,"State entered did not contain 9 numberslength");
+			}
+			alldigit=true;
+			counter=0;
+		}
+		return answer;
     }
 }
