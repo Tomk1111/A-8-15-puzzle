@@ -3,22 +3,31 @@ import javax.swing.*;
 import java.util.*;
 public class is17185203
 {
-	public static boolean full=false;
+	private static boolean full=false;
 	private static ArrayList<int[][]> open = new ArrayList<int[][]>();
 	private static ArrayList<Integer> openCosts = new ArrayList<Integer>(); //HVALUE
 	private static ArrayList<Integer> openLevel = new ArrayList<Integer>(); //GVALUE
 	private static ArrayList<int[][]> closed = new ArrayList<int[][]>();
 	private static int gValue = 0;
+	private static int size=0;
+	private final static String message1="Please enter the Start state as a sequence of numbers between [0, 8] e.g 5 2 0 6 1 3 4 8 7";
+	private final static String message2="Please enter the Start state as a sequence of numbers between [0, 15] e.g 5 2 0 6 1 3 4 8 7 10 9 13 12 11 15 14";
+	
 public static void main(String[] args)
 {
-	
+	setSize();
 	int finall[][];
 	int goal[][];
+	String message;
+	if(size==3)
+		message=message1;
+	else 
+		message=message2;
 	boolean valid=false;
 	finall=new int[3][3];
-	finall=fill("Please enter the Start state as a sequence of numbers between [0, 8] e.g 5 2 0 6 1 3 4 8 7");
+	finall=fill(message);
 	goal=new int[3][3];
-	goal=fill("Please enter the End state as a sequence of numbers between [0, 8] e.g 5 2 0 6 1 3 4 8 7");
+	goal=fill(message.replaceAll("Start","End"));
 	int posx=getx(finall);
 	int posy=gety(finall);
 	open.add(finall);
@@ -28,20 +37,6 @@ public static void main(String[] args)
 }
 
 
-//PROBABLY HAVE TO CHANGE, THINK IT ASSUMES GOAL STATE IS ASCENDING NUMBERS
-public static boolean isSolvable(int[][] board)//NOT POSSIBLE IF NO. OF INVERSIONS IS ODD IN INPUT (8 is 6 on goal, 6 is 8 on goal)
-{
-	int inversionCount = 0;
-	for (int i=0;i < board.length -1 ;i++)
-	{
-		for (int j= i+1;j < board.length;j++)
-		{
-			if (board[j][i] > 0 && board[j][i] > 0 && board[j][i] > board[i][j])
-				inversionCount++;
-		}
-	}
-	return (inversionCount % 2 == 0);
-}
 
 public static void solveit(int[][]source,int x,int y,int [][]goal)
 {
@@ -52,7 +47,7 @@ public static void solveit(int[][]source,int x,int y,int [][]goal)
 			System.out.println("You win");
 			printBoard(source);
 		}
-		else if (isSolvable(source))
+		else
 		{
 		//	System.out.println("OPEN LIST: " + open.size());
 		//	System.out.println("CLOSED LIST: " + closed.size());
@@ -154,8 +149,6 @@ public static void solveit(int[][]source,int x,int y,int [][]goal)
 				
 		
 		}
-		else
-			System.out.println("This puzzle is not solvable!\n");
 	}
 	catch (Exception e)
 	{System.out.println(e.getMessage());}
@@ -293,13 +286,17 @@ public static void solveit(int[][]source,int x,int y,int [][]goal)
 	
 	public static boolean inputCheck(int[][] values)
 	{ 
-		boolean[] check = {false,false,false,false,false,false,false,false,false,false};
+		boolean[] check=new boolean[size*size];
+		for(int g=0;g<((size*size));g++)
+		{
+			check[g]=false;
+		}
 		for (int i = 0; i < values.length; i++)
 		{
 		    for (int j = 0; j < values[0].length; j++)
 			{
 			         // check to see if values are in range.
-                                 if (values[i][j] > 8 || values[i][j] < 0) return false;
+                                 if (values[i][j] > ((size*size)-1) || values[i][j] < 0) return false;
 				 
 				 // we are accessing each value once here. Have to check to make sure that that is the only time that number appeared.
 				 else if (check[values[i][j]] == false)
@@ -317,8 +314,8 @@ public static void solveit(int[][]source,int x,int y,int [][]goal)
 	
 public static int [][] fill(String text)
     {
-	int [][] answer=new int[3][3];
-	String [] sArr=new String[9];
+	int [][] answer=new int[size][size];
+	String [] sArr=new String[size];
 	String input="";
 	int counter=0;
 	boolean alldigit=true;
@@ -326,7 +323,7 @@ public static int [][] fill(String text)
 		{
 		input=JOptionPane.showInputDialog(null,text);
 		sArr=input.split(" ");
-		if(sArr.length==9)
+		if(sArr.length==(size*size))
 			{
 			for(int h=0;h<sArr.length;h++)
 			{
@@ -335,9 +332,9 @@ public static int [][] fill(String text)
 			}
 			if(alldigit)
 			{
-			for(int i=0;i<3;i++)
+			for(int i=0;i<size;i++)
 				{
-				for(int j=0;j<3;j++)
+				for(int j=0;j<size;j++)
 					{
 					answer[i][j]=Integer.parseInt(sArr[counter]);
 					counter++;
@@ -349,7 +346,7 @@ public static int [][] fill(String text)
 					}
 					else
 					{
-						JOptionPane.showMessageDialog(null,"State entered did not contain numbers 0-8");
+						JOptionPane.showMessageDialog(null,"State entered did not contain numbers 0-"+((size*size)-1));
 					}
 			}
 			else
@@ -359,15 +356,13 @@ public static int [][] fill(String text)
 			}
 		else
 			{
-			JOptionPane.showMessageDialog(null,"State entered did not contain exactly 9 states");
+			JOptionPane.showMessageDialog(null,"State entered did not contain exactly"+(size*size)+ " states");
 			}
 			alldigit=true;
 			counter=0;
 		}
 		full=false;
 		return answer;
-		
-	
     }
 	
 	
@@ -403,6 +398,27 @@ public static int [][] fill(String text)
 		
 		}
 		return temp;
+	}
+	
+	public static void setSize()
+	{
+		String options[]={"8","15"};
+        int result = JOptionPane.showOptionDialog(null, "Please select the size of the puzzle.", "A*", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+		if(result==0)
+			size=3;
+		else
+			size=4;
+	}
+	
+	public static void printarr(int [][] ass)
+	{
+		for(int i=0;i<size;i++)
+		{
+			for(int j=0;j<size;j++)
+			{
+				System.out.println(ass[i][j]);
+			}
+		}
 	}
 	
 }
