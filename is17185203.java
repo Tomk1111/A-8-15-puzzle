@@ -1,6 +1,7 @@
 import java.io.*;
 import javax.swing.*;
 import java.util.*;
+import java.util.Collections;
 public class is17185203
 {
 	private static boolean full=false;
@@ -8,12 +9,23 @@ public class is17185203
 	private static ArrayList<Integer> openCosts = new ArrayList<Integer>(); //HVALUE
 	private static ArrayList<Integer> openLevel = new ArrayList<Integer>(); //GVALUE
 	private static ArrayList<int[][]> closed = new ArrayList<int[][]>();
+	
+	private static ArrayList<Node> openNodes = new ArrayList<Node>();
+	private static ArrayList<Node> closedNodes = new ArrayList<Node>();
+	
+	
+	
+	
+	
+	
+	
+	private static ArrayList<Node> bestMoves = new ArrayList<Node>();
 	private static int gValue = 0;
 	private static int size=0;
 	private final static String message1="Please enter the Start state as a sequence of numbers between [0, 8] e.g 5 2 0 6 1 3 4 8 7";
 	private final static String message2="Please enter the Start state as a sequence of numbers between [0, 15] e.g 5 2 0 6 1 3 4 8 7 10 9 13 12 11 15 14";
 	
-public static void main(String[] args)
+public static void main(String[] args) throws Exception
 {
 	setSize();
 	int finall[][];
@@ -30,124 +42,199 @@ public static void main(String[] args)
 	goal=fill(message.replaceAll("Start","End"));
 	int posx=getx(finall);
 	int posy=gety(finall);
-	open.add(finall);
-	openCosts.add(getCost(finall, goal));
-	openLevel.add(0);
-	solveit(finall,posx,posy,goal);
+
+	int cost = getCost(finall, goal);
+	Node sourceNode = new Node(finall, gValue,cost);
+	openNodes.add(sourceNode);
+//	printBoard(finall);
+	//System.out.println();
+	solveit(sourceNode, posx, posy, goal);
 }
 
 
 
-public static void solveit(int[][]source,int x,int y,int [][]goal)
+public static void solveit(Node source,int x,int y,int [][]goal)
 {
 	try
 	{	
-		if (compareBoards(source, goal))	
+		ArrayList<Node> bestPath = new ArrayList<Node>();
+		boolean check = false;
+		if (compareBoards(source.board, goal))	
 		{
-			System.out.println("You win");
-			printBoard(source);
+			System.out.println("WIN");
+			while (!check)
+			{
+				bestPath.add(source);
+				
+
+				if (source.parent == null)
+				{
+					check = true;
+					
+				}
+				else
+					source = source.parent;
+			}
+			Collections.reverse(bestPath);
+			for (Node tempN : bestPath)
+			{
+				printBoard(tempN.board);
+				System.out.println("---------");
+				
+			}
 		}
+			
+			//System.out.println("You win");
+			//printBoard(source);
+		
 		else
 		{
-		//	System.out.println("OPEN LIST: " + open.size());
-		//	System.out.println("CLOSED LIST: " + closed.size());
-		//	System.out.println("------------");
-		//	System.out.println("BASE:\n");
-		//	printBoard(source);
-		//	System.out.println("COST = " + (openLevel.get(0) + getCost(source, goal)));
-		//	System.out.println();
-			gValue = openLevel.get(0) +1;	
-			int[][]temp=new int[source.length][source.length];
-			temp=copy(source);
+			gValue = openNodes.get(0).gVal+1;
+			int[][]temp=new int[source.board.length][source.board.length];
+			temp=copy(source.board);
 			
 			int tempx=0;
-			if(y+1<source.length)
+			if(y+1<source.board.length)
 				{
 				//	System.out.println("(B): "+source[x][y+1] + " to the west");
-					temp=copy(source);
+					temp=copy(source.board);
 					tempx =temp[x][y+1];
 					temp[x][y+1]=0;
 					temp[x][y]=tempx;
+	
 					if (!boardSearched(temp))
 					{
 					//	printBoard(temp);
 					//	System.out.println();
 					//	System.out.println("Cost =" +(getCost(temp,goal) + gValue));
-						open.add(temp);
-						openCosts.add(getCost(temp, goal));
-						openLevel.add(gValue);
+						Node tempNode = new Node(temp, gValue, getCost(temp, goal), source);
+						openNodes.add(tempNode);
+				//		open.add(temp);
+					//	openCosts.add(getCost(temp, goal));
+						//openLevel.add(gValue);
 					}
 				}
 				if(y-1>=0)
 				{
 				//	System.out.println("(A): "+source[x][y-1] +" to the east");
-					temp=copy(source);
+					temp=copy(source.board);
 					tempx =temp[x][y-1];
 					temp[x][y-1]=0;
 					temp[x][y]=tempx;
+	
 					if (!boardSearched(temp))
 					{
+						
+						Node tempNode = new Node(temp, gValue, getCost(temp, goal), source);
+						openNodes.add(tempNode);
 					//	printBoard(temp);
 					//	System.out.println();
 					//	System.out.println("Cost =" +(getCost(temp,goal) + gValue));
-						open.add(temp);
-						openCosts.add(getCost(temp, goal));
-						openLevel.add(gValue);
+						//open.add(temp);
+						//openCosts.add(getCost(temp, goal));
+						//openLevel.add(gValue);
 					}
 				}
 				
 				if(x-1>=0)
 				{
 				//	System.out.println("(C): "+source[x-1][y] + " to the south");
-					temp=copy(source);
+					temp=copy(source.board);
 					tempx =temp[x-1][y];
 					temp[x-1][y]=0;
 					temp[x][y]=tempx;
+
 					if (!boardSearched(temp))
 					{
+						Node tempNode = new Node(temp, gValue, getCost(temp, goal), source);
+						openNodes.add(tempNode);
 					//	printBoard(temp);
 					//	System.out.println();
 					//	System.out.println("Cost =" +(getCost(temp,goal) + gValue));	
-						open.add(temp);
-						openCosts.add(getCost(temp, goal));
-						openLevel.add(gValue);
+					//	open.add(temp);
+					//	openCosts.add(getCost(temp, goal));
+					//	openLevel.add(gValue);
 					}
 				}
 				
-				if(x+1<source.length)
+				if(x+1<source.board.length)
 				{
 				//	System.out.println("(D): "+source[x+1][y] + " to the north");
-					temp=copy(source);
+					temp=copy(source.board);
 					tempx =temp[x+1][y];
 					temp[x+1][y]=0;
 					temp[x][y]=tempx;
+	
 					if (!boardSearched(temp))
 					{
+						Node tempNode = new Node(temp, gValue, getCost(temp, goal), source);
+						openNodes.add(tempNode);
 					//	printBoard(temp);
 					//	System.out.println();
 					//	System.out.println("Cost =" +(getCost(temp,goal) + gValue));
-						open.add(temp);
-						openCosts.add(getCost(temp, goal));
-						openLevel.add(gValue);
+						//open.add(temp);
+						//openCosts.add(getCost(temp, goal));
+						//openLevel.add(gValue);
 					}
 				}
 				
-				closed.add(open.get(0));
-				open.remove(0);
-				openCosts.remove(0);
-				openLevel.remove(0);
+				if (openNodes.size() > 0)
+				{
+				closedNodes.add(openNodes.get(0));
+				openNodes.remove(0);
+				}
+				
 				
 				sortOpenList();
 			
 				//	System.out.println("Best Choice is:\n");
 				//printBoard(open.get(0));
 				//	System.out.println();
-				int[][] newSource = open.get(0);
-				int posX = getx(newSource);
-				int posY = gety(newSource);
-				solveit(newSource, posX, posY, goal);
+
+				//Node move = new Node(open.get(0), gValue, getCost(open.get(0), goal), parentNode);
+				//bestMoves.add(parentNode);
+				//int pos = 0;
+			/*	if (bestMoves.size() > 0)
+				{
+						System.out.println("ln178 SIZE : " + bestMoves.size());
+							int smallest = bestMoves.get(bestMoves.size()-1).cost;
+							for (int i=bestMoves.size()-1;i>=0;i--)
+							{
+								System.out.println("ln183 SIZE : " + bestMoves.size());
+								if (bestMoves.get(i).cost < smallest)
+								{
+									System.out.println("ln186 SIZE : " + bestMoves.size());
+									smallest = bestMoves.get(i).cost;
+									pos = i;
+									parentNode = bestMoves.get(pos).parent;
+								}
+							}
+							
+							if (bestMoves.get(pos).gVal <=bestMoves.get(bestMoves.size()-1).gVal)
+							{
+								System.out.println("ln195 SIZE : " + bestMoves.size());
+								bestMoves.clear();
+								System.out.println("ln197 SIZE : " + bestMoves.size());
+								while(parentNode.parent != null)
+								{
+									System.out.println("ln199 SIZE : " + bestMoves.size());
+									bestMoves.add(parentNode);
+									if (parentNode.parent != null)
+									{
+										System.out.println("ln203 SIZE : " + bestMoves.size());
+										parentNode = parentNode.parent;
+									}
+								};
+							}
+				}*/
+				//int[][] newSource = open.get(0);
 				
-		
+			
+				
+				Node newSource = openNodes.get(0);
+				int posX = getx(newSource.board);
+				int posY = gety(newSource.board);
+				solveit(newSource, posX, posY, goal);		
 		}
 	}
 	catch (Exception e)
@@ -169,27 +256,18 @@ public static void solveit(int[][]source,int x,int y,int [][]goal)
 	
 	
 	public static void sortOpenList() //BUBBLE SORT FOR NOW
-	{
-		int[][] temp = new int[3][3];
-		int tempVar = 0;
-		int tempVar2 = 0;
-		for (int i = 0; i < openCosts.size()-1; i++)
+	{		
+		Node tempNode;
+		
+		for (int i=0;i < openNodes.size()-1;i++)
 		{
-			for(int j = 0; j < openCosts.size()-i-1; j++)
+			for (int j=0;j < openNodes.size()-i-1;j++)
 			{
-				if(openCosts.get(j) > openCosts.get(j + 1))
+				if (openNodes.get(j).hVal + openNodes.get(j).gVal > openNodes.get(j+1).hVal + openNodes.get(j+1).gVal)
 				{
-                   tempVar = openCosts.get(j+1);
-                   openCosts.set(j+1, openCosts.get(j));
-                   openCosts.set(j, tempVar);
-				   
-				   temp = open.get(j+1); 
-				   open.set(j+1, open.get(j));
-				   open.set(j, temp);
-				   
-				   tempVar2 = openLevel.get(j+1);
-				   openLevel.set(j+1, openLevel.get(j));
-				   openLevel.set(j, tempVar2);
+					tempNode = openNodes.get(j+1);
+					openNodes.set(j+1, openNodes.get(j));
+					openNodes.set(j, tempNode);
 				}
 			}
 		}
@@ -252,9 +330,9 @@ public static void solveit(int[][]source,int x,int y,int [][]goal)
 	public static int getx(int[][]a)
 	{
 		int answ=0;
-		for(int i=0;i<3;i++)
+		for(int i=0;i<size;i++)
 		{
-			for(int z=0;z<3;z++)
+			for(int z=0;z<size;z++)
 			{	
 				if(a[i][z]==0)
 				{
@@ -269,9 +347,9 @@ public static void solveit(int[][]source,int x,int y,int [][]goal)
 	public static int gety(int[][]a)
 	{
 		int ans=0;
-		for(int i=0;i<3;i++)
+		for(int i=0;i<size;i++)
 		{
-			for(int z=0;z<3;z++)
+			for(int z=0;z<size;z++)
 			{	
 				if(a[i][z]==0)
 				{
@@ -410,15 +488,34 @@ public static int [][] fill(String text)
 			size=4;
 	}
 	
-	public static void printarr(int [][] ass)
+	
+static class Node{  
+	 public  int[][] board;
+	public  int gVal = 0;
+	 public int hVal = 0;
+	public int cost;
+	public Node parent;
+	
+  	Node(int[][] board, int gVal, int hVal, Node parent)
 	{
-		for(int i=0;i<size;i++)
-		{
-			for(int j=0;j<size;j++)
-			{
-				System.out.println(ass[i][j]);
-			}
-		}
+		this.board = board;
+		this.gVal = gVal;
+		this.hVal = hVal;
+		this.parent = parent;
+		this.cost = gVal + hVal;
 	}
 	
-}
+	Node (int[][]board, int gVal, int hVal)
+	{
+		this.board= board;
+		this.gVal = gVal;
+		this.hVal = hVal;
+		this.cost = gVal + hVal;
+	}
+	
+	
+	
+  }  
+}  
+	
+	
