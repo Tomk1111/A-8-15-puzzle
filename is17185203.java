@@ -157,14 +157,14 @@ public static void solveit(Node source,int x,int y,int [][]goal)
 	{System.out.println(e.getMessage());}
 }
 	
-	public static void printBoard(int[][] board)
+    public static void printBoard(int[][] board)
 	{
 		for (int i=0;i < board.length;i++)
 		{
 			for (int j=0;j < board.length;j++)
 			{
-					System.out.print(board[i][j] + " ");
-				
+					System.out.printf("%2d",board[i][j]);
+				    System.out.print(" ");
 				
 			}
 			System.out.println();
