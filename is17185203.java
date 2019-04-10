@@ -162,14 +162,20 @@ public static void solveit(Node source,int x,int y,int [][]goal)
 		for (int i=0;i < board.length;i++)
 		{
 			for (int j=0;j < board.length;j++)
-			{
+			{	
+				if (size == 4)
+				{
 					System.out.printf("%2d",board[i][j]);
 				    System.out.print(" ");
-				
+				}
+				else
+				{
+					System.out.print(board[i][j] + " ");
+				}
 			}
 			System.out.println();
 		}
-		System.out.println("--------");
+			System.out.println("-----------");
 	}
 	
 	
